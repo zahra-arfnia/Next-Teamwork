@@ -7,6 +7,7 @@ export const getQuestion = async (formData) => {
 export const addQuestion = async (formData) => {
   await fetch("http://localhost:3000/api/v1/question", {
     method: "POST",
+    status: 201,
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(formData),
   });
