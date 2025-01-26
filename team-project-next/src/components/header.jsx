@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { FaMoon } from "react-icons/fa";
 
-
 export default function Header() {
   const links = [
     { name: "HOME", path: "/" },
@@ -22,11 +21,7 @@ export default function Header() {
           className="logo"
         />
         {links.map((item) => (
-          <Link
-            key={item.name}
-            href={item.path}
-            className="link"
-          >
+          <Link key={item.name} href={item.path} className="link">
             {item.name}
           </Link>
         ))}
