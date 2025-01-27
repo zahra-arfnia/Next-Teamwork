@@ -27,10 +27,16 @@ export default function Question() {
       setLoading(false);
     }
   };
+  const handleSetFilter = () => {
+    const sortedData = [...qaData].sort((a, b) => {
+      const dateA = new Date(a.createdAt);
+      const dateB = new Date(b.createdAt);
 
-  useEffect(() => {
-    fetchQuestions();
-  }, []);
+      return filter === "newer" ? dateB - dateA : dateA - dateB;
+    });
+
+    setQaData(sortedData);
+  };
 
   return (
     <div className="question-container">
@@ -47,10 +53,22 @@ export default function Question() {
       <div className="question-filter">
         <p>Filter by:</p>
         <div className="flex">
-          <button className="filter-button" onClick={() => setFilter("newer")}>
+          <button
+            className="filter-button"
+            onClick={() => {
+              setFilter("newer");
+              handleSetFilter();
+            }}
+          >
             <FaArrowDownLong className="icon-filter" /> Newer
           </button>
-          <button className="filter-button" onClick={() => setFilter("older")}>
+          <button
+            className="filter-button"
+            onClick={() => {
+              setFilter("older");
+              handleSetFilter();
+            }}
+          >
             <FaArrowDownLong className="icon-filter" /> Older
           </button>
         </div>
@@ -69,9 +87,7 @@ export default function Question() {
                   <h2 className="item-title">{item.title}</h2>
                   <p className="item-description">{item.description}</p>
                 </div>
-                <p className="item-date">
-                  {new Date(item.dateTime).toLocaleString()}
-                </p>
+                <p className="item-date">{new Date().toLocaleString()}</p>
               </Link>
             </div>
 
