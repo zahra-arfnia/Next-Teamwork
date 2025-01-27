@@ -27,27 +27,14 @@ export default function Question() {
       setLoading(false);
     }
   };
+  const handleSetFilter = () => {
+    const sortedData = [...qaData].sort((a, b) => {
+      const dateA = new Date(a.createdAt);
+      const dateB = new Date(b.createdAt);
 
+      return filter === "newer" ? dateB - dateA : dateA - dateB;
+    });
 
-
-  const handleDelete = async (id) => {
-    try {
-      const res = await fetch(`${API_URL}/${id}`, {
-        method: "DELETE", 
-      });
-
-      if (res.ok) {
-        fetchQuestions();
-      } else {
-        console.error("Failed to delete the question");
-      }
-    } catch (err) {
-      console.error("Error deleting question", err);
-    }
-  };
-  useEffect(() => {
-    fetchQuestions();
-  }, []);
 
   return (
     <div className="question-container">
@@ -64,12 +51,7 @@ export default function Question() {
       <div className="question-filter">
         <p>Filter by:</p>
         <div className="flex">
-          <button className="filter-button" onClick={() => setFilter("newer")}>
-            <FaArrowDownLong className="icon-filter" /> Newer
-          </button>
-          <button className="filter-button" onClick={() => setFilter("older")}>
-            <FaArrowDownLong className="icon-filter" /> Older
-          </button>
+
         </div>
       </div>
 
@@ -86,9 +68,7 @@ export default function Question() {
                   <h2 className="item-title">{item.title}</h2>
                   <p className="item-description">{item.description}</p>
                 </div>
-                <p className="item-date">
-                  {new Date(item.dateTime).toLocaleString()}
-                </p>
+                <p className="item-date">{new Date().toLocaleString()}</p>
               </Link>
             </div>
             <button
