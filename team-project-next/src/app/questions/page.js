@@ -35,8 +35,6 @@ export default function Question() {
       return filter === "newer" ? dateB - dateA : dateA - dateB;
     });
 
-    setQaData(sortedData);
-  };
 
   return (
     <div className="question-container">
@@ -53,24 +51,7 @@ export default function Question() {
       <div className="question-filter">
         <p>Filter by:</p>
         <div className="flex">
-          <button
-            className="filter-button"
-            onClick={() => {
-              setFilter("newer");
-              handleSetFilter();
-            }}
-          >
-            <FaArrowDownLong className="icon-filter" /> Newer
-          </button>
-          <button
-            className="filter-button"
-            onClick={() => {
-              setFilter("older");
-              handleSetFilter();
-            }}
-          >
-            <FaArrowDownLong className="icon-filter" /> Older
-          </button>
+
         </div>
       </div>
 
@@ -90,9 +71,8 @@ export default function Question() {
                 <p className="item-date">{new Date().toLocaleString()}</p>
               </Link>
             </div>
-
             <button
-              onClick={() => handleDelete(item._id)}
+              onClick={() => handleDelete(item._id)} 
               className="delete-button"
             >
               <FaTrash className="icon-delete-btn" />

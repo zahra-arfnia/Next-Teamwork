@@ -1,116 +1,119 @@
-// import Image from "next/image";
-
-// import { Button } from "@mui/material";
-
-// export default function Home() {
-//   return <div>L</div>;
-// }
 "use client";
-import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useState } from "react";
+import { TextField, Button } from "@mui/material";
+import Modaladdquestions from "@/components/modaladd";  
 
-export default function AskQuestion() {
+export default function Home() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("");
-  const [questions, setQuestions] = useState([]);
+  const [isModalOpen, setIsModalOpen] = useState(false); 
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
 
-    if (!title || !description) {
-      setStatus("لطفاً عنوان و توضیحات را وارد کنید.");
-      return;
-    }
-
+  const submitQuestion = async () => {
     try {
       const res = await fetch("/api/v1/question", {
-        method: "POST", 
+        method: "POST",
         headers: {
-          "Content-Type": "application/json", 
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
           title,
           description,
-        }), 
+        }),
       });
 
-      const data = await res.json();
-      console.log(data);
-
       if (res.ok) {
-        setStatus("سوال جدید با موفقیت اضافه شد.");
         setTitle(""); 
         setDescription("");
-        fetchQuestions();  
       } else {
-        setStatus("خطا در اضافه کردن سوال.");
+        setStatus("Error in adding question");
       }
-    } catch (error) {
-      console.error("Error adding question:", error);
-      setStatus("خطا در ارتباط با سرور.");
-    }
-  };
-
-  const fetchQuestions = async () => {
-    try {
-      const res = await fetch("/api/v1/question");
-      const data = await res.json();
-      if (res.ok) {
-        setQuestions(data);
-      } else {
-        setStatus("خطا در بارگذاری سوالات.");
-      }
-    } catch (error) {
-      console.error("Error fetching questions:", error);
-      setStatus("خطا در ارتباط با سرور.");
+    } catch (err) {
+      console.error("Error:", err);
+      setStatus("Error in adding question");
+    } finally {
+      setIsModalOpen(false); 
     }
   };
 
 
-  useEffect(() => {
-    fetchQuestions();
-  }, []); 
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!title || !description) {
+      setStatus("Please enter a title and description");
+      return;
+    }
+    setIsModalOpen(true); 
+  };
+
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+
+  const handleConfirmSubmit = () => {
+    submitQuestion();
+  };
 
   return (
-    <div>
-      <h1>اضافه کردن سوال جدید</h1>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="title">عنوان سوال:</label>
-          <input
-            id="title"
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="عنوان سوال را وارد کنید"
-          />
+    <div className="container-home">
+      <div className="box1">
+        <div className="box2">
+          <p className="title-home">Find your answer</p>
+          <h1 className="h1-box1">Question and Answers</h1>
+          <p className="des-box">
+            Looking for answers? You have come to the right place! Our community
+            is here to help with reliable, insightful answers to all your
+            questions. Whether you're here to learn, share your expertise, or
+            just browse, we are excited to have you.
+          </p>
+          <Link href={"/questions"} className="btn-box">
+            GO TO QUESTIONS
+          </Link>
         </div>
-        <div>
-          <label htmlFor="description">توضیحات سوال:</label>
-          <textarea
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="توضیحات سوال را وارد کنید"
-          />
-        </div>
-        <button type="submit">ارسال سوال</button>
-      </form>
+        <img src="/download.jpg" className="img-home" />
+      </div>
 
-      {status && <p>{status}</p>}
+      <div className="box2-home">
+        <h1 className="h1-box2">Ask your questions</h1>
+        {status && <p className="err">{status}</p>}
+        <form onSubmit={handleSubmit} className="form">
+          <div>
+            <TextField
+              id="title"
+              label="Title"
+              variant="filled"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              fullWidth
+              sx={{ marginBottom: 2 }}
+            />
+            <TextField
+              id="description"
+              label="Description"
+              variant="filled"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              fullWidth
+              multiline
+              rows={4}
+            />
+          </div>
+          <button type="submit" className="submit-button-qestions">
+            SUBMIT
+          </button>
+        </form>
+      </div>
 
-      <h2>سوالات موجود</h2>
-      {questions.length > 0 ? (
-        <ul>
-          {questions.map((question) => (
-            <li key={question._id}>
-              <h3>{question.title}</h3>
-              <p>{question.description}</p>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>هیچ سوالی پیدا نشد.</p>
+
+      {isModalOpen && (
+        <Modaladdquestions
+          onClose={handleCloseModal}
+          onConfirm={handleConfirmSubmit} 
+        />
       )}
     </div>
   );

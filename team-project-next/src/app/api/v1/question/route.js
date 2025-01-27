@@ -34,3 +34,43 @@ export async function POST(request) {
     disconnectDB();
   }
 }
+
+
+
+
+// PATCH answer
+export async function PATCH(request) {
+  try {
+    await connectDB();
+    const { id, newAnswer, updatedAnswers } = await request.json();
+
+    let updatedQuestion;
+
+    if (newAnswer) {
+      updatedQuestion = await Question.findByIdAndUpdate(
+        id,
+        { $push: { answer: newAnswer } },
+        { new: true }
+      );
+    } else if (updatedAnswers) {
+      updatedQuestion = await Question.findByIdAndUpdate(
+        id,
+        { answer: updatedAnswers },
+        { new: true }
+      );
+    }
+
+    return new Response(JSON.stringify(updatedQuestion), {
+      headers: { "Content-Type": "application/json" },
+    });
+  } catch (error) {
+    console.error("Error updating answers:", error);
+    disconnectDB();
+    return new Response(
+      JSON.stringify({ message: "Failed to update answers." }),
+      { status: 500, headers: { "Content-Type": "application/json" } }
+    );
+  } finally {
+    disconnectDB();
+  }
+}
